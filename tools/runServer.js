@@ -10,7 +10,7 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import proxyMiddleware from 'http-proxy-middleware';
 import historyCallback from 'connect-history-api-fallback';
 import config from '../config';
-import { devConfig } from './webpack.config';
+import devConfig from './webpack.config.dev';
 
 async function runServer() {
     // default port where dev server listens for incoming traffic

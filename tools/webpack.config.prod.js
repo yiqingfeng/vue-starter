@@ -1,125 +1,20 @@
 /**
- * @desc get webpack configuration
+ * @desc webpack configuration for production
  */
 import path from 'path';
 import webpack from 'webpack';
-import formatter from 'eslint-friendly-formatter';
 import merge from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import FriendlyErrorsPlugin from 'friendly-errors-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import OptimizeCSSPlugin from 'optimize-css-assets-webpack-plugin';
 import CompressionWebpackPlugin from 'compression-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import baseConfig from './webpack.config.base.js';
 import { assetsPath, styleLoaders } from './utils';
-import vueLoaderConfig from './loaders';
 import config from '../config';
 
-function resolve(dir) {
-    return path.join(__dirname, '..', dir);
-}
-
-export const baseConfig = {
-    entry: {
-        app: './src/main.js',
-    },
-    output: {
-        path: config.build.assetsRoot,
-        filename: '[name].js',
-    },
-    resolve: {
-        extensions: ['.js', '.vue', '.json'],
-        alias: {
-            'vue$': 'vue/dist/vue.esm.js', // eslint-disable-line quote-props
-            '@': resolve('src'),
-        },
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(js|vue)$/,
-                loader: 'eslint-loader',
-                enforce: 'pre',
-                include: [resolve('src'), resolve('test')],
-                options: {
-                    formatter,
-                },
-            },
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader',
-                options: vueLoaderConfig,
-            },
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                include: [resolve('src'), resolve('test')],
-            },
-            {
-                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 10000,
-                    name: assetsPath('img/[name].[hash:7].[ext]'),
-                },
-            },
-            {
-                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 10000,
-                    name: assetsPath('media/[name].[hash:7].[ext]'),
-                },
-            },
-            {
-                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 10000,
-                    name: assetsPath('fonts/[name].[hash:7].[ext]'),
-                },
-            },
-        ],
-    },
-};
-
-/**
- * 开发环境下webpack配置
- */
-export const devConfig = merge(baseConfig, {
-    entry: {
-        app: ['./tools/dev-client', './src/main.js'],
-    },
-    output: {
-        publicPath: config.dev.assetsPublicPath,
-    },
-    module: {
-        rules: styleLoaders({ sourceMap: config.dev.cssSourceMap }),
-    },
-    // cheap-module-eval-source-map is faster for development
-    devtool: '#cheap-module-eval-source-map',
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': config.dev.env,
-        }),
-        // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin(),
-        // https://github.com/ampedandwired/html-webpack-plugin
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: 'index.html',
-            inject: true,
-        }),
-        new FriendlyErrorsPlugin(),
-    ],
-});
-
-/**
- * 生产环境webpack配置
- */
-export const buildConfig = merge(baseConfig, {
+export default merge(baseConfig, {
     module: {
         rules: styleLoaders({
             sourceMap: config.build.productionSourceMap,
@@ -163,6 +58,8 @@ export const buildConfig = merge(baseConfig, {
             template: 'index.html',
             inject: true,
             minify: {
+                minifyJS: true,
+                minifyCSS: true,
                 removeComments: true,
                 collapseWhitespace: true,
                 removeAttributeQuotes: true,
@@ -171,6 +68,7 @@ export const buildConfig = merge(baseConfig, {
             },
             // necessary to consistently work with multiple chunks via CommonsChunkPlugin
             chunksSortMode: 'dependency',
+            nodeEnv: 'production',
         }),
         // split vendor js into its own file
         new webpack.optimize.CommonsChunkPlugin({

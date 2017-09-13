@@ -9,7 +9,7 @@ import webpack from 'webpack';
 import run from './run';
 import checkVersion from './check-version';
 import config from '../config';
-import { buildConfig } from './webpack.config';
+import buildConfig from './webpack.config.prod';
 
 async function build() {
     process.env.NODE_ENV = 'production';

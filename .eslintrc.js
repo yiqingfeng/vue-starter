@@ -1,14 +1,17 @@
 // http://eslint.org/docs/user-guide/configuring
-import { baseConfig } from './tools/webpack.config';
+const path  = require('path');
+const resolve = (dir) => path.join(__dirname, '.', dir);
 
 module.exports = {
     root: true,
     parser: 'babel-eslint',
     parserOptions: {
+        ecmaVersion: 6,
         sourceType: 'module'
     },
     env: {
         browser: true,
+        es6: true
     },
     extends: 'airbnb-base',
     // required to lint *.vue files
@@ -19,7 +22,15 @@ module.exports = {
     'settings': {
         'import/resolver': {
             'webpack': {
-                'config': baseConfig
+                'config': {
+                    resolve: {
+                        extensions: ['.js', '.vue', '.json'],
+                        alias: {
+                            'vue$': 'vue/dist/vue.esm.js', // eslint-disable-line quote-props
+                            '@': resolve('src'),
+                        },
+                    },
+                }
             }
         }
     },

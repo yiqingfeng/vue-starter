@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "babel-node tools/run start",
     "start": "babel-node tools/run start",
-    "build": "babel-node tools/run build",
+    "build": "babel-node tools/run build --release",
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
